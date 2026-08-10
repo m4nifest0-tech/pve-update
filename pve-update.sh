@@ -1,18 +1,21 @@
 #!/usr/bin/env bash
+#!/usr/bin/env bash
+
+# pve-update.sh
 #
-# pve-update.sh — update, upgrade e pulizia profonda per host Proxmox VE
+# Copyright 2026 m4nifest0-tech
 #
-# Non tocca mai: backup (vzdump), dischi/immagini VM e CT, template ISO/CT.
-# Agisce solo su: cache apt, kernel vecchi, journal, /tmp, /var/tmp, core dump.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# Uso:
-#   sudo ./pve-update.sh
+# http://www.apache.org/licenses/LICENSE-2.0
 #
-# Opzioni:
-#   -y   non chiede conferma prima di procedere
-#   -r   riavvia automaticamente se necessario
-#   -k N mantieni N kernel installati (default 2, incluso quello in uso)
-#   -h   mostra l'help
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 set -euo pipefail
 
