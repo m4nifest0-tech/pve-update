@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#!/usr/bin/env bash
 
 # pve-update.sh
 #
@@ -16,12 +15,44 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# Update, upgrade e pulizia profonda per host Proxmox VE.
+# Non tocca mai: backup (vzdump), dischi/immagini VM e CT, template ISO/CT.
+#
+# Uso:
+#   sudo ./pve-update.sh
+#
+# Opzioni:
+#   -y   non chiede conferma prima di procedere
+#   -r   riavvia automaticamente se necessario
+#   -k N mantieni N kernel installati (default 2, incluso quello in uso)
+#   -h   mostra l'help
 
 set -euo pipefail
 
 AUTO_YES=0
 AUTO_REBOOT=0
 KEEP_KERNELS=2
+
+CY='\033[0;36m'
+NC='\033[0m'
+
+header() {
+    clear
+    printf "${CY}"
+    cat <<"EOF"
+    ____ _    ________   __  __          __      __
+   / __ \ |  / / ____/  / / / /___  ____/ /___ _/ /____
+  / /_/ / | / / __/    / / / / __ \/ __  / __ `/ __/ _ \
+ / ____/| |/ / /___   / /_/ / /_/ / /_/ / /_/ / /_/  __/
+/_/     |___/_____/   \____/ .___/\__,_/\__,_/\__/\___/
+                          /_/
+EOF
+    printf "${NC}\n"
+    echo "This script will update, upgrade and clean up this Proxmox VE host."
+    echo "Non tocca mai backup (vzdump), immagini VM/CT o template."
+    echo
+}
 
 usage() {
     echo "Uso: $0 [-y] [-r] [-k N]"
@@ -50,17 +81,19 @@ if [[ "$(id -u)" -ne 0 ]]; then
     exit 1
 fi
 
+header
+
+if [[ "$AUTO_YES" -ne 1 ]]; then
+    read -rp "Start the Proxmox VE Update & Cleanup Script (y/n)? " ans
+    [[ "$ans" =~ ^[Yy]$ ]] || { echo "Annullato."; exit 0; }
+fi
+
 if ! command -v pveversion >/dev/null 2>&1; then
     echo "Attenzione: 'pveversion' non trovato, questo non sembra un host Proxmox VE." >&2
     if [[ "$AUTO_YES" -ne 1 ]]; then
         read -rp "Continuare comunque? [y/N] " ans
         [[ "$ans" =~ ^[Yy]$ ]] || exit 1
     fi
-fi
-
-if [[ "$AUTO_YES" -ne 1 ]]; then
-    read -rp "Eseguire update, upgrade e pulizia profonda del sistema? [y/N] " ans
-    [[ "$ans" =~ ^[Yy]$ ]] || { echo "Annullato."; exit 0; }
 fi
 
 KERNEL_BEFORE="$(uname -r)"
