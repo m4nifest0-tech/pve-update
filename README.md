@@ -12,7 +12,7 @@ Script Bash per **Proxmox VE** che automatizza gli aggiornamenti del sistema e l
 * Pulizia `systemd journal`
 * Pulizia `/tmp` e `/var/tmp`
 * Pulizia dei crash dump
-* Rilevamento della necessità di reboot
+* Rilevamento della necessita di reboot
 * Reboot automatico opzionale
 
 > Lo script non interviene sui dischi, backup, ISO o template delle VM/CT.
@@ -26,19 +26,35 @@ Script Bash per **Proxmox VE** che automatizza gli aggiornamenti del sistema e l
 
 ## Quick Start
 
-Esegui direttamente l'ultima versione disponibile dal branch `main`:
+Il modo consigliato per eseguire lo script da remoto e tramite `install.sh`, che scarica `pve-update.sh`, verifica il suo hash SHA256 rispetto al checksum pubblicato nel repository e lo esegue solo se corrisponde:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/m4nifest0-tech/pve-update/main/pve-update.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/m4nifest0-tech/pve-update/main/install.sh)"
 ```
 
 Con opzioni:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/m4nifest0-tech/pve-update/main/pve-update.sh)" -- -y
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/m4nifest0-tech/pve-update/main/install.sh)" -- -y -k 3
 ```
 
-> **Warning:** verifica sempre lo script prima di eseguirlo direttamente su un host di produzione.
+Se l'hash non corrisponde, l'esecuzione viene interrotta e non viene lanciato nulla.
+
+> **Warning:** anche con la verifica dell'hash, resta buona norma dare un'occhiata al codice prima di eseguirlo su un host di produzione.
+
+## Verifica dell'integrita (SHA256)
+
+Ogni versione di `pve-update.sh` ha un checksum pubblicato nel file [`pve-update.sh.sha256`](pve-update.sh.sha256), aggiornato automaticamente da una GitHub Action ad ogni modifica dello script.
+
+Per verificare manualmente il file scaricato:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/m4nifest0-tech/pve-update/main/pve-update.sh -o pve-update.sh
+curl -fsSL https://raw.githubusercontent.com/m4nifest0-tech/pve-update/main/pve-update.sh.sha256 -o pve-update.sh.sha256
+sha256sum -c pve-update.sh.sha256
+```
+
+Se il controllo restituisce `OK`, il file scaricato corrisponde esattamente a quello pubblicato nel repository.
 
 ## Installation
 
@@ -67,12 +83,12 @@ sudo ./pve-update.sh
 
 ### Options
 
-| Option | Description                           |
+| Option | Description |
 | :----: | ------------------------------------- |
-|  `-y`  | Esegue senza richieste di conferma    |
-|  `-r`  | Riavvia automaticamente se necessario |
-| `-k N` | Mantiene `N` kernel installati        |
-|  `-h`  | Mostra l'help                         |
+| `-y` | Esegue senza richieste di conferma |
+| `-r` | Riavvia automaticamente se necessario |
+| `-k N` | Mantiene `N` kernel installati |
+| `-h` | Mostra l'help |
 
 ### Examples
 
@@ -92,7 +108,9 @@ sudo ./pve-update.sh -y -r
 
 ### Remote execution
 
-È possibile eseguire lo script direttamente da GitHub:
+Il modo consigliato e tramite `install.sh` (vedi Quick Start), che verifica l'hash prima di eseguire lo script.
+
+In alternativa e possibile eseguire `pve-update.sh` direttamente, senza verifica automatica dell'hash:
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/m4nifest0-tech/pve-update/main/pve-update.sh)"
@@ -108,7 +126,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/m4nifest0-tech/pve-updat
 
 Per impostazione predefinita vengono mantenuti **2 kernel**, incluso quello attualmente in uso.
 
-È possibile modificare il numero con:
+E possibile modificare il numero con:
 
 ```bash
 sudo ./pve-update.sh -k 3
@@ -125,7 +143,7 @@ Lo script opera direttamente sull'host Proxmox e utilizza comandi di sistema com
 * `apt purge`
 * `rm -rf`
 
-Prima dell'utilizzo in produzione è consigliato verificare la presenza di backup funzionanti.
+Prima dell'utilizzo in produzione e consigliato verificare la presenza di backup funzionanti.
 
 Il reboot automatico (`-r`) deve essere utilizzato esclusivamente durante una finestra di manutenzione.
 
