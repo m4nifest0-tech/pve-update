@@ -19,6 +19,7 @@
 # Update, upgrade e pulizia profonda per host Proxmox VE.
 # Non tocca mai: backup (vzdump), dischi/immagini VM e CT, template ISO/CT.
 #
+# Test automazione checksum SHA256 (verifica GitHub Action update-checksum.yml)
 # Uso:
 #   sudo ./pve-update.sh
 #
