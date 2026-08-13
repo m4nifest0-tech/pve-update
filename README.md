@@ -152,3 +152,7 @@ Il reboot automatico (`-r`) deve essere utilizzato esclusivamente durante una fi
 This project is licensed under the **Apache License 2.0**.
 
 See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For questions, issues or collaboration: m4nifest0-tech@m4nifest0.it
